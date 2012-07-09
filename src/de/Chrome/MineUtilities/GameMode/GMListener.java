@@ -73,6 +73,8 @@ public class GMListener implements Listener {
 		}
 	}
 	
+	// Eierwerferfen verbieten
+	@EventHandler
 	public void onPlayerThrowEgg(PlayerEggThrowEvent event) {
 		Player player = event.getPlayer();
 		
