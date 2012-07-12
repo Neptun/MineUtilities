@@ -92,7 +92,7 @@ public class GMListener implements Listener {
 		                player.sendMessage(ChatColor.AQUA + "Du kannst nichts verändern!");
 		                return;
 	                default:
-	                	player.sendMessage(ChatColor.RED + "Du darfst im Creative-Modus mit nicht interagieren!"+ event.getClickedBlock().getType());
+	                	player.sendMessage(ChatColor.RED + "Du darfst im Creative-Modus mit nicht interagieren!");
 	                	break;
 				}
 			}
