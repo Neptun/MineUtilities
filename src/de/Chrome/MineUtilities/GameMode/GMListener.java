@@ -5,14 +5,15 @@ import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import de.Chrome.MineUtilities.MineUtilities;
@@ -62,6 +63,44 @@ public class GMListener implements Listener {
 		}
 	}
 	
+	// Interagieren mit Truhe, ...
+	@EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		
+		if (player.getGameMode() == GameMode.CREATIVE) {
+			// Auf den Boden Schalter treten ignorieren
+			if (event.getAction() == Action.PHYSICAL)
+				return;
+
+			if (event.getAction() == Action.LEFT_CLICK_BLOCK)
+				return;
+			
+			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				switch (event.getClickedBlock().getType()) {
+					case WOODEN_DOOR:if (event.getAction() == Action.LEFT_CLICK_BLOCK)
+						return;
+					case FENCE_GATE:
+					case TRAP_DOOR:
+						return;
+					case CHEST:
+						event.setCancelled(true);
+		                final Chest chest = (Chest) event.getClickedBlock().getState();
+		                final Inventory i = this.plugin.getServer().createInventory(player, chest.getInventory().getSize());
+		                i.setContents(chest.getInventory().getContents());
+		                player.openInventory(i);
+		                player.sendMessage(ChatColor.AQUA + "Du kannst nichts verändern!");
+		                return;
+	                default:
+	                	player.sendMessage(ChatColor.RED + "Du darfst im Creative-Modus mit nicht interagieren!"+ event.getClickedBlock().getType());
+	                	break;
+				}
+			}
+			
+			event.setCancelled(true);
+		}
+    }
+	
 	// Wegwerfen verbieten
 	@EventHandler
 	public void onPlayerDropItem (PlayerDropItemEvent event) {
@@ -70,25 +109,6 @@ public class GMListener implements Listener {
 		if (player.getGameMode() == GameMode.CREATIVE) {
 			event.setCancelled(true);		
 			player.sendMessage(ChatColor.RED + "Du darfst im Creative Modus keine Items wegwerfen!");
-		}
-	}
-	
-	// Eierwerferfen verbieten
-	@EventHandler
-	public void onPlayerThrowEgg(PlayerEggThrowEvent event) {
-		Player player = event.getPlayer();
-		
-		if (player.getGameMode() == GameMode.CREATIVE) {
-			event.setHatching(false);
-			player.sendMessage(ChatColor.RED + "Du darfst im Creative Modus keine Items wegwerfen!");
-		}
-	}
-	
-	// Spawner Eierwerfen verbieten - Allgemein
-	@EventHandler
-	public void onCreatureSpawn(CreatureSpawnEvent event) {
-		if (event.getSpawnReason() == SpawnReason.SPAWNER_EGG) {
-			event.setCancelled(true);
 		}
 	}
 }
