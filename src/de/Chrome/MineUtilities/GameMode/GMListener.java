@@ -40,6 +40,9 @@ public class GMListener implements Listener {
 		GameMode newGameMode = event.getNewGameMode();
 		Player player = event.getPlayer();
 		
+		if (player.hasPermission("MineUtilities.bypass"))
+			return;
+		
 		if (newGameMode == GameMode.CREATIVE) {		
 			// Inventar speichern und dann löschen
 			inventories.put(player.getName(), player.getInventory().getContents());		
@@ -67,6 +70,9 @@ public class GMListener implements Listener {
 	@EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
+		
+		if (player.hasPermission("MineUtilities.bypass"))
+			return;
 		
 		if (player.getGameMode() == GameMode.CREATIVE) {
 			// Auf den Boden Schalter treten ignorieren
@@ -105,6 +111,9 @@ public class GMListener implements Listener {
 	@EventHandler
 	public void onPlayerDropItem (PlayerDropItemEvent event) {
 		Player player = event.getPlayer();
+		
+		if (player.hasPermission("MineUtilities.bypass"))
+			return;
 		
 		if (player.getGameMode() == GameMode.CREATIVE) {
 			event.setCancelled(true);		
